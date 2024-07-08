@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:clean_calendar/clean_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'summary_view.dart';
 
 class FrequencyView extends StatefulWidget {
   FrequencyView({Key? key}) : super(key: key);
@@ -34,6 +35,7 @@ class _FrequencyViewState extends State<FrequencyView> {
   @override
   String? toDayFormated;
   TextEditingController dateController = TextEditingController();
+  late DateTime lastFormOfDate;
   final formatYMD = DateFormat(
     'dd/MM/yy HH:mm',
   );
@@ -53,151 +55,177 @@ class _FrequencyViewState extends State<FrequencyView> {
       body: Container(
         margin: const EdgeInsets.all(20),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.title),
-                TextField(
-                  controller: titleController,
-                  decoration: const InputDecoration(
-                    constraints: BoxConstraints(maxWidth: 200),
-                    hintText: "Title",
-
-                  ),
-                )
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.attach_money),
-                TextField(
-                  keyboardType: TextInputType.number,
-                  controller: amountController,
-                  decoration: const InputDecoration(
-                    constraints: BoxConstraints(maxWidth: 200),
-                    hintText: "Amount to pay",
-                    suffixText: "zł"
-                  ),
-                )
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  onPressed: () async {
-                    DateTime? pickedDate = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime(2028));
-                    TimeOfDay? pickedTime = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay(hour: 0, minute: 0));
-                    if (pickedDate == null || pickedTime == null) {
-                      setState(() {
-                        dateController.text = "";
-                      });
-                    } else {
-                      pickedDate = pickedDate.copyWith(
-                          hour: pickedTime.hour, minute: pickedTime.minute);
-                      setState(() {
-                        dateController.text = formatYMD.format(pickedDate!);
-                      });
-                    }
-                  },
-                  icon: Icon(Icons.date_range),
-                ),
-                TextField(
-                    controller: dateController,
-                    decoration: InputDecoration(
-                        constraints: BoxConstraints(maxWidth: 200),
-                        hintText: toDayFormated,
-                        labelText: "initial date"
-                    )),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Checkbox(
-                  value: isAutoFrequencyChecked,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      isAutoFrequencyChecked = value;
-                      print("$isAutoFrequencyChecked");
-                    });
-                  },
-                ),
-                const Text("Auto frequency"),
-              ],
-            ),
-            if (isAutoFrequencyChecked != false) ...[
-              Row(
+            Container(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  DropdownButton(
-                    value: _selectedFrequency,
-                    items: const [
-                      DropdownMenuItem(child: Text("Daily"), value: "Daily"),
-                      DropdownMenuItem(child: Text("Weekly"), value: "Weekly"),
-                      DropdownMenuItem(child: Text("Monthly"), value: "Monthly"),
-                      DropdownMenuItem(child: Text("Yearly"), value: "Yearly"),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.title),
+                      TextField(
+                        controller: titleController,
+                        decoration: const InputDecoration(
+                          constraints: BoxConstraints(maxWidth: 200),
+                          hintText: "Title",
+                        ),
+                      )
                     ],
-                    onChanged: dropdownCallback,
                   ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.attach_money),
+                      TextField(
+                        keyboardType: TextInputType.number,
+                        controller: amountController,
+                        decoration: const InputDecoration(
+                            constraints: BoxConstraints(maxWidth: 200),
+                            hintText: "Amount to pay",
+                            suffixText: "zł"),
+                      )
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        onPressed: () async {
+                          DateTime? pickedDate = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(2028));
+                          TimeOfDay? pickedTime = await showTimePicker(
+                              context: context,
+                              initialTime: TimeOfDay(hour: 0, minute: 0));
+                          if (pickedDate == null || pickedTime == null) {
+                            setState(() {
+                              dateController.text = "";
+                            });
+                          } else {
+                            pickedDate = pickedDate.copyWith(
+                                hour: pickedTime.hour,
+                                minute: pickedTime.minute);
+                            lastFormOfDate = pickedDate;
+                            setState(() {
+                              dateController.text =
+                                  formatYMD.format(pickedDate!);
+                            });
+                          }
+                        },
+                        icon: Icon(Icons.date_range),
+                      ),
+                      TextField(
+                          controller: dateController,
+                          decoration: InputDecoration(
+                              constraints: BoxConstraints(maxWidth: 200),
+                              hintText: toDayFormated,
+                              labelText: "initial date")),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Checkbox(
+                        value: isAutoFrequencyChecked,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            isAutoFrequencyChecked = value;
+                            print("$isAutoFrequencyChecked");
+                          });
+                        },
+                      ),
+                      const Text("Auto frequency"),
+                    ],
+                  ),
+                  if (isAutoFrequencyChecked != false) ...[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        DropdownButton(
+                          value: _selectedFrequency,
+                          items: const [
+                            DropdownMenuItem(
+                                child: Text("Daily"), value: "Daily"),
+                            DropdownMenuItem(
+                                child: Text("Weekly"), value: "Weekly"),
+                            DropdownMenuItem(
+                                child: Text("Monthly"), value: "Monthly"),
+                            DropdownMenuItem(
+                                child: Text("Yearly"), value: "Yearly"),
+                          ],
+                          onChanged: dropdownCallback,
+                        ),
+                      ],
+                    ),
+                  ],
+                  /* CleanCalendar(
+                    datePickerCalendarView: DatePickerCalendarView.monthView,
+                    dateSelectionMode: DatePickerSelectionMode.singleOrMultiple,
+                    onCalendarViewDate: (DateTime calendarViewDate) {
+                      // print(calendarViewDate);
+                    },
+                    selectedDates: selectedDates,
+                    onSelectedDates: (List<DateTime> value) {
+                      DateTime startDate = value.first;
+                      setState(() {
+                          if (selectedDates.contains(startDate)) {
+                            selectedDates.remove(startDate);
+                            print(startDate);
+                          } else {
+                            if(isAutoFrequencyChecked==false) {
+                              selectedDates.add(startDate);
+                            }else{
+                              switch(_selectedFrequency){
+                                case "Daily":
+                                  DateTime endDate = DateTime(startDate.year+1, startDate.month, 1).subtract(Duration(days: 1));
+                                  while(startDate.isBefore(endDate)||startDate.isAtSameMomentAs(endDate)){
+                                    selectedDates.add(startDate);
+                                    startDate = startDate.add(Duration(days:1));
+                                  }
+                                  break;
+                                case "Weekly":
+                                  DateTime endDate = DateTime(startDate.year+1, startDate.month, 1).subtract(Duration(days: 1));
+                                  while(startDate.isBefore(endDate)||startDate.isAtSameMomentAs(endDate)){
+                                    selectedDates.add(startDate);
+                                    startDate = startDate.add(Duration(days:7));
+                                  }
+                                  break;
+                                case "Monthly":
+                                  DateTime endDate = DateTime(startDate.year+1, startDate.month, 1).subtract(Duration(days: 1));
+                                  while(startDate.isBefore(endDate)||startDate.isAtSameMomentAs(endDate)){
+                                    selectedDates.add(startDate);
+                                    startDate = new DateTime(startDate.year, startDate.month+1,startDate.day);
+                                  }
+                                  break;
+                              }
+                            }
+                          }
+                      });
+                      print(selectedDates);
+                    },
+                  ),*/
                 ],
               ),
-            ],
-            /* CleanCalendar(
-              datePickerCalendarView: DatePickerCalendarView.monthView,
-              dateSelectionMode: DatePickerSelectionMode.singleOrMultiple,
-              onCalendarViewDate: (DateTime calendarViewDate) {
-                // print(calendarViewDate);
-              },
-              selectedDates: selectedDates,
-              onSelectedDates: (List<DateTime> value) {
-                DateTime startDate = value.first;
-                setState(() {
-                    if (selectedDates.contains(startDate)) {
-                      selectedDates.remove(startDate);
-                      print(startDate);
-                    } else {
-                      if(isAutoFrequencyChecked==false) {
-                        selectedDates.add(startDate);
-                      }else{
-                        switch(_selectedFrequency){
-                          case "Daily":
-                            DateTime endDate = DateTime(startDate.year+1, startDate.month, 1).subtract(Duration(days: 1));
-                            while(startDate.isBefore(endDate)||startDate.isAtSameMomentAs(endDate)){
-                              selectedDates.add(startDate);
-                              startDate = startDate.add(Duration(days:1));
-                            }
-                            break;
-                          case "Weekly":
-                            DateTime endDate = DateTime(startDate.year+1, startDate.month, 1).subtract(Duration(days: 1));
-                            while(startDate.isBefore(endDate)||startDate.isAtSameMomentAs(endDate)){
-                              selectedDates.add(startDate);
-                              startDate = startDate.add(Duration(days:7));
-                            }
-                            break;
-                          case "Monthly":
-                            DateTime endDate = DateTime(startDate.year+1, startDate.month, 1).subtract(Duration(days: 1));
-                            while(startDate.isBefore(endDate)||startDate.isAtSameMomentAs(endDate)){
-                              selectedDates.add(startDate);
-                              startDate = new DateTime(startDate.year, startDate.month+1,startDate.day);
-                            }
-                            break;
-                        }
-                      }
-                    }
-                });
-                print(selectedDates);
-              },
-            ),*/
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                        onPressed: () => Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => SummaryView(title:titleController.text,date: lastFormOfDate,))),
+                        icon: Icon(Icons.arrow_forward_outlined))
+                  ],
+                ),
+              ],
+            ),
           ],
         ),
       ),

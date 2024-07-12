@@ -1,0 +1,1 @@
+enum FrequencyEnum {none,daily,weekly,monthly,yearly}

@@ -4,6 +4,7 @@ import 'package:clean_calendar/clean_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'summary_view.dart';
+import 'resources/frequency_enum.dart';
 
 class FrequencyView extends StatefulWidget {
   FrequencyView({Key? key}) : super(key: key);
@@ -39,6 +40,7 @@ class _FrequencyViewState extends State<FrequencyView> {
   final formatYMD = DateFormat(
     'dd/MM/yy HH:mm',
   );
+  //auto
   void initState() {
     // TODO: implement initState
 
@@ -146,15 +148,27 @@ class _FrequencyViewState extends State<FrequencyView> {
                       children: [
                         DropdownButton(
                           value: _selectedFrequency,
-                          items: const [
+                          items: [
                             DropdownMenuItem(
-                                child: Text("Daily"), value: "Daily"),
+                              child: Text("Daily"),
+                              value: "Daily",
+
+                            ),
                             DropdownMenuItem(
-                                child: Text("Weekly"), value: "Weekly"),
+                              child: Text("Weekly"),
+                              value: "Weekly",
+                              
+                            ),
                             DropdownMenuItem(
-                                child: Text("Monthly"), value: "Monthly"),
+                              child: Text("Monthly"),
+                              value: "Monthly",
+
+                            ),
                             DropdownMenuItem(
-                                child: Text("Yearly"), value: "Yearly"),
+                              child: Text("Yearly"),
+                              value: "Yearly",
+
+                            ),
                           ],
                           onChanged: dropdownCallback,
                         ),
@@ -219,8 +233,13 @@ class _FrequencyViewState extends State<FrequencyView> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     IconButton(
-                        onPressed: () => Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => SummaryView(title:titleController.text,date: lastFormOfDate,))),
+                        onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SummaryView(
+                                      title: titleController.text,
+                                      date: lastFormOfDate,
+                                    ))),
                         icon: Icon(Icons.arrow_forward_outlined))
                   ],
                 ),

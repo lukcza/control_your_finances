@@ -46,6 +46,8 @@ class _FrequencyViewState extends State<FrequencyView> {
 
     DateTime now = DateTime.now();
     toDayFormated = formatYMD.format(now);
+    dateController.text = toDayFormated!;
+    lastFormOfDate = DateTime.now();
     super.initState();
   }
 

@@ -77,24 +77,44 @@ class _SummaryViewState extends State<SummaryView> {
                     child: Container(
                       padding: EdgeInsets.all(20),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                        if (widget.title != null && widget.date != null) ...[
-                          Text(widget.title),
-                          Text("First: "+DateFormat(
-                            'dd/MM/yy HH:mm',
-                          ).format(widget.date)),
-                          Text("Next: "+DateFormat(
-                            'dd/MM/yy HH:mm',
-                          ).format(nextDate)),
-                          if (widget.autoFrequencyType!=null)
-                            Text(widget.autoFrequencyType!),
-                        ]
-                      ]),
+                            if (widget.title != null &&
+                                widget.date != null) ...[
+                              Text(widget.title),
+                              Text("First: " +
+                                  DateFormat(
+                                    'dd/MM/yy HH:mm',
+                                  ).format(widget.date)),
+                              Text("Next: " +
+                                  DateFormat(
+                                    'dd/MM/yy HH:mm',
+                                  ).format(nextDate)),
+                              if (widget.autoFrequencyType != null)
+                                Text(widget.autoFrequencyType!),
+                            ]
+                          ]),
                     ),
                   ),
                 )
+              ],
+            ),
+            Row(
+
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    BackButton()
+                  ],
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(onPressed: ()=>print("home"), icon: Icon(Icons.add)),
+                  ],
+                ),
               ],
             )
           ],

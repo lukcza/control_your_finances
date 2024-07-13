@@ -1,23 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
 class SummaryView extends StatefulWidget {
-  SummaryView({Key? key, required this.title, required this.date})
+  SummaryView(
+      {Key? key,
+      required this.title,
+      required this.date,
+      this.autoFrequencyType})
       : super(key: key);
   String title;
   DateTime date;
-
+  String? autoFrequencyType;
   @override
   State<SummaryView> createState() => _SummaryViewState();
 }
 
 class _SummaryViewState extends State<SummaryView> {
+  late DateTime nextDate;
+  void setNextDate() {
+    if (widget.autoFrequencyType != null) {
+      switch (widget.autoFrequencyType) {
+        case "Daily":
+          nextDate = widget.date.add(Duration(days: 1));
+          break;
+        case "Weekly":
+          nextDate = widget.date.add(Duration(days: 7));
+          break;
+        case "Monthly":
+          //nextDate = new DateTime(widget.date.year, widget.date.month+1, widget.date.day,)
+          nextDate = widget.date.copyWith(month: widget.date.month + 1);
+          break;
+        case "Yearly":
+          nextDate = widget.date.copyWith(year: widget.date.year + 1);
+          break;
+      }
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
+    setNextDate();
     super.initState();
   }
 
-  late String nextDate;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +57,7 @@ class _SummaryViewState extends State<SummaryView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  margin: EdgeInsets.only(left: 20,bottom: 20),
+                  margin: EdgeInsets.only(left: 20, bottom: 20),
                   child: Text(
                     "Your new Fianance",
                     style: TextStyle(
@@ -46,15 +72,27 @@ class _SummaryViewState extends State<SummaryView> {
                 Expanded(
                   child: Card(
                     color: Colors.white60,
-                    margin: EdgeInsets.fromLTRB(20, 70, 20,0),
+                    margin: EdgeInsets.fromLTRB(20, 70, 20, 0),
                     elevation: 30,
-                    child: Column(children: [
-                      if (widget.title != null && widget.date != null) ...[
-                        Text(widget.title),
-                        Text(DateFormat('dd/MM/yy HH:mm',).format(widget.date)),
-                        Text(widget.title),
-                      ]
-                    ]),
+                    child: Container(
+                      padding: EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                        if (widget.title != null && widget.date != null) ...[
+                          Text(widget.title),
+                          Text("First: "+DateFormat(
+                            'dd/MM/yy HH:mm',
+                          ).format(widget.date)),
+                          Text("Next: "+DateFormat(
+                            'dd/MM/yy HH:mm',
+                          ).format(nextDate)),
+                          if (widget.autoFrequencyType!=null)
+                            Text(widget.autoFrequencyType!),
+                        ]
+                      ]),
+                    ),
                   ),
                 )
               ],

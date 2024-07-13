@@ -239,6 +239,7 @@ class _FrequencyViewState extends State<FrequencyView> {
                                 builder: (context) => SummaryView(
                                       title: titleController.text,
                                       date: lastFormOfDate,
+                                      autoFrequencyType: _selectedFrequency,
                                     ))),
                         icon: Icon(Icons.arrow_forward_outlined))
                   ],

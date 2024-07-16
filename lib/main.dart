@@ -19,7 +19,11 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    databaseService = DatabaseService.instance;
+    try {
+      databaseService = DatabaseService.instance;
+    }catch(err){
+      print('err');
+    }
   }
   @override
   Widget build(BuildContext context) {

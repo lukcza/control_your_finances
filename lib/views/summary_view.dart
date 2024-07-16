@@ -1,6 +1,8 @@
+import 'package:control_your_finances/service/database_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../service/item_model.dart';
 import 'home_view.dart';
 
 class SummaryView extends StatefulWidget {
@@ -8,11 +10,13 @@ class SummaryView extends StatefulWidget {
       {Key? key,
       required this.title,
       required this.date,
+      required this.amount,
       this.autoFrequencyType})
       : super(key: key);
   String title;
   DateTime date;
   String? autoFrequencyType;
+  double amount;
   @override
   State<SummaryView> createState() => _SummaryViewState();
 }
@@ -39,17 +43,33 @@ class _SummaryViewState extends State<SummaryView> {
     }
   }
 
+  //database
+  late DatabaseService databaseService;
+  late ItemModel itemModel;
   @override
   void initState() {
     // TODO: implement initState
-    setNextDate();
     super.initState();
+    setNextDate();
+    itemModel = ItemModel(
+        title: widget.title,
+        startDate: widget.date,
+        nextDate: nextDate,
+        amount: widget.amount,
+        frequency: widget.autoFrequencyType!);
+    try {
+      databaseService = DatabaseService.instance;
+    } catch (err) {
+      print(err);
+    }
   }
+
   @override
   void didUpdateWidget(covariant SummaryView oldWidget) {
     // TODO: implement didUpdateWidget
     super.didUpdateWidget(oldWidget);
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -110,18 +130,22 @@ class _SummaryViewState extends State<SummaryView> {
               children: [
                 const Column(
                   mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    BackButton(
-                    )
-                  ],
+                  children: [BackButton()],
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    IconButton(onPressed: ()=>Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context)=>HomeView())
-                    ), icon: Icon(Icons.add)),
+                    IconButton(
+                        onPressed: () {
+                          databaseService.create(itemModel);
+                          //print(databaseService.readItems(itemModel.id!));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HomeView()));
+
+                        },
+                        icon: Icon(Icons.add)),
                   ],
                 ),
               ],

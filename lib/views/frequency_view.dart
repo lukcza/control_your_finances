@@ -242,6 +242,7 @@ class _FrequencyViewState extends State<FrequencyView> {
                                       title: titleController.text,
                                       date: lastFormOfDate,
                                       autoFrequencyType: _selectedFrequency,
+                                      amount: double.parse(amountController.text),
                                     ))),
                         icon: Icon(Icons.arrow_forward_outlined))
                   ],

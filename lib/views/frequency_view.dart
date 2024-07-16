@@ -4,7 +4,7 @@ import 'package:clean_calendar/clean_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'summary_view.dart';
-import 'resources/frequency_enum.dart';
+import '../resources/frequency_enum.dart';
 
 class FrequencyView extends StatefulWidget {
   FrequencyView({Key? key}) : super(key: key);
@@ -150,7 +150,7 @@ class _FrequencyViewState extends State<FrequencyView> {
                       children: [
                         DropdownButton(
                           value: _selectedFrequency,
-                          items: [
+                          items: const [
                             DropdownMenuItem(
                               child: Text("Daily"),
                               value: "Daily",

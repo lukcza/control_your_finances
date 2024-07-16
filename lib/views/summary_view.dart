@@ -43,7 +43,11 @@ class _SummaryViewState extends State<SummaryView> {
     setNextDate();
     super.initState();
   }
-
+  @override
+  void didUpdateWidget(covariant SummaryView oldWidget) {
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,12 +105,12 @@ class _SummaryViewState extends State<SummaryView> {
               ],
             ),
             Row(
-
               children: [
-                Column(
+                const Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    BackButton()
+                    BackButton(
+                    )
                   ],
                 ),
                 Column(

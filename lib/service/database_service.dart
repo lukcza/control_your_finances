@@ -2,17 +2,17 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'item_model.dart';
 
-class DatabaseHelper {
-  static final DatabaseHelper instance = DatabaseHelper._init();
+class DatabaseService {
+  static final DatabaseService instance = DatabaseService._init();
 
   static Database? _database;
 
-  DatabaseHelper._init();
+  DatabaseService._init();
 
   Future<Database> get database async {
     if (_database != null) return _database!;
 
-    _database = await _initDB('events.db');
+    _database = await _initDB('items.db');
     return _database!;
   }
 
@@ -43,15 +43,15 @@ class DatabaseHelper {
   Future<ItemModel> create(ItemModel itemModel) async {
     final db = await instance.database;
 
-    final id = await db.insert('events', itemModel.toMap());
+    final id = await db.insert('Items', itemModel.toMap());
     return itemModel.copy(id: id);
   }
 
-  Future<ItemModel?> readEvent(int id) async {
+  Future<ItemModel?> readItems(int id) async {
     final db = await instance.database;
 
     final maps = await db.query(
-      'events',
+      'items',
       columns: ['id', 'title', 'startDate', 'nextDate', 'amount', 'frequency'],
       where: 'id = ?',
       whereArgs: [id],

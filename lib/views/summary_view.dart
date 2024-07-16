@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'home_view.dart';
+
 class SummaryView extends StatefulWidget {
   SummaryView(
       {Key? key,
@@ -116,7 +118,10 @@ class _SummaryViewState extends State<SummaryView> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    IconButton(onPressed: ()=>print("home"), icon: Icon(Icons.add)),
+                    IconButton(onPressed: ()=>Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context)=>HomeView())
+                    ), icon: Icon(Icons.add)),
                   ],
                 ),
               ],

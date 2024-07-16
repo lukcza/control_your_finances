@@ -1,3 +1,4 @@
+import 'package:control_your_finances/views/frequency_view.dart';
 import 'package:flutter/material.dart';
 
 class DefaultDarwer extends StatelessWidget {
@@ -6,9 +7,17 @@ class DefaultDarwer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: Column(
+      child: ListView(
         children: [
-
+          ListTile(
+            leading: Icon(Icons.note_add),
+            title: Text("Add note"),
+            onTap: () => {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return  FrequencyView();
+              }))
+            },
+          ),
         ],
       ),
     );

@@ -1,11 +1,26 @@
+import 'package:control_your_finances/service/database_service.dart';
+import 'package:control_your_finances/service/item_model.dart';
 import 'package:flutter/material.dart';
 import 'views/frequency_view.dart';
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late DatabaseService databaseService;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    databaseService = DatabaseService.instance;
+  }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

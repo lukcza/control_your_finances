@@ -1,3 +1,4 @@
+import 'package:control_your_finances/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 class HomeView extends StatefulWidget {
   const HomeView({Key? key}) : super(key: key);
@@ -15,7 +16,7 @@ class _HomeViewState extends State<HomeView> {
           children: [],
         ),
       ),
-
+      drawer: DefaultDarwer(),
     );
   }
 }

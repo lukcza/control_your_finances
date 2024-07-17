@@ -13,7 +13,7 @@ class DatabaseService{
   Future<Database> get database async {
     if (_database != null) return _database!;
 
-    _database = await _initDB('items.db');
+    _database = await _initDB('Items.db');
     return _database!;
   }
 
@@ -30,7 +30,7 @@ class DatabaseService{
     const doubleType = 'REAL NOT NULL';
 
     await db.execute('''
-    CREATE TABLE events (
+    CREATE TABLE IF NOT EXISTS Items(
     id $idType,
      title $textType,
   startDate $textType,
@@ -52,7 +52,7 @@ class DatabaseService{
     final db = await instance.database;
 
     final maps = await db.query(
-      'items',
+      'Items',
       columns: ['id', 'title', 'startDate', 'nextDate', 'amount', 'frequency'],
       where: 'id = ?',
       whereArgs: [id],
@@ -69,7 +69,7 @@ class DatabaseService{
     final db = await instance.database;
 
     const orderBy = 'startDate ASC';
-    final result = await db.query('events', orderBy: orderBy);
+    final result = await db.query('Items', orderBy: orderBy);
 
     return result.map((json) => ItemModel.fromMap(json)).toList();
   }
@@ -78,7 +78,7 @@ class DatabaseService{
     final db = await instance.database;
 
     return db.update(
-      'events',
+      'Items',
       event.toMap(),
       where: 'id = ?',
       whereArgs: [event.id],
@@ -89,7 +89,7 @@ class DatabaseService{
     final db = await instance.database;
 
     return await db.delete(
-      'events',
+      'Items',
       where: 'id = ?',
       whereArgs: [id],
     );

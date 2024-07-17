@@ -61,6 +61,15 @@ class _ListOfItemsState extends State<ListOfItems> {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Text(item.title),
+                                      Text(item.id.toString()),
+                                      Text(item.frequency),
+                                      Text("Start Notify: "+DateFormat(
+                                        'dd/MM/yy HH:mm',
+                                      ).format(item.startDate)),
+                                      Text("Next Notify: "+DateFormat(
+                                        'dd/MM/yy HH:mm',
+                                      ).format(item.nextDate)),
+
                                       Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [

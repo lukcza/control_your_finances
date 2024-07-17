@@ -27,7 +27,7 @@ class _FrequencyViewState extends State<FrequencyView> {
       print(_selectedFrequency);
     }
   }
-
+  //TODO: create a data validation for form
   //title
   TextEditingController titleController = TextEditingController();
   //amunt
@@ -42,15 +42,12 @@ class _FrequencyViewState extends State<FrequencyView> {
   );
   //auto
   void initState() {
-    // TODO: implement initState
-
     DateTime now = DateTime.now();
     toDayFormated = formatYMD.format(now);
     dateController.text = toDayFormated!;
     lastFormOfDate = DateTime.now();
     super.initState();
   }
-
   /*//calendar
   List<DateTime> selectedDates = [];*/
   @override

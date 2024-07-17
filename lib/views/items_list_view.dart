@@ -5,30 +5,42 @@ import '../service/item_model.dart';
 import 'package:intl/intl.dart';
 
 import '../widgets/drawer.dart';
-class ListOfItems extends StatefulWidget {
-  const ListOfItems({Key? key}) : super(key: key);
 
+class ListOfItems extends StatefulWidget {
+  ListOfItems({Key? key}) : super(key: key);
+  Future<List<ItemModel>>? data;
   @override
   State<ListOfItems> createState() => _ListOfItemsState();
 }
 
 class _ListOfItemsState extends State<ListOfItems> {
   late DatabaseService databaseService;
-  late Future<List<ItemModel>>  _data;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     databaseService = DatabaseService.instance;
-    _data = databaseService.readAllEvents();
+    widget.data = databaseService.readAllEvents();
   }
+
+  @override
+  void didUpdateWidget(covariant ListOfItems oldWidget) {
+    // TODO: implement didUpdateWidget
+    oldWidget.data = databaseService.readAllEvents();
+    print("ss1");
+    super.didUpdateWidget(oldWidget);
+  }
+
+  //TODO: update ITEM
+  //TODO: copy ITEM
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
           FutureBuilder<List<ItemModel>>(
-            future: _data,
+            future: widget.data,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator());
@@ -48,40 +60,58 @@ class _ListOfItemsState extends State<ListOfItems> {
                         children: [
                           ListTile(
                             title: Text(item.title),
-                            subtitle: Text("Notfication: "+DateFormat(
-                              'dd/MM/yy HH:mm',
-                            ).format(item.nextDate)),
-                            onTap: ()=>showDialog<String>(
-                              context: context,
-                              builder: (BuildContext context)=>Dialog(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(item.title),
-                                      Text(item.id.toString()),
-                                      Text(item.frequency),
-                                      Text("Start Notify: "+DateFormat(
-                                        'dd/MM/yy HH:mm',
-                                      ).format(item.startDate)),
-                                      Text("Next Notify: "+DateFormat(
-                                        'dd/MM/yy HH:mm',
-                                      ).format(item.nextDate)),
-
-                                      Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          IconButton(onPressed: ()=>print('tap'), icon: Icon(Icons.delete)),
-                                          IconButton(onPressed: ()=>print('tap'), icon: Icon(Icons.edit)),
-                                          IconButton(onPressed: ()=>print('tap'), icon: Icon(Icons.copy)),
-                                        ],)
-                                    ],
-                                  ),
-                                ),
-                              )
-                            ),
+                            subtitle: Text("Notfication: " +
+                                DateFormat(
+                                  'dd/MM/yy HH:mm',
+                                ).format(item.nextDate)),
+                            onTap: () => showDialog<String>(
+                                context: context,
+                                builder: (BuildContext context) => Dialog(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(item.title),
+                                            Text(item.amount.toString() + "zł"),
+                                            Text(item.id.toString()),
+                                            Text(item.frequency),
+                                            Text("Start Notify: " +
+                                                DateFormat(
+                                                  'dd/MM/yy HH:mm',
+                                                ).format(item.startDate)),
+                                            Text("Next Notify: " +
+                                                DateFormat(
+                                                  'dd/MM/yy HH:mm',
+                                                ).format(item.nextDate)),
+                                            Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                IconButton(
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        items.remove(item);
+                                                        deleteItem(item.id!);
+                                                      });
+                                                      Navigator.pop(context);
+                                                    },
+                                                    icon: Icon(Icons.delete)),
+                                                IconButton(
+                                                    onPressed: () =>
+                                                        print('tap'),
+                                                    icon: Icon(Icons.edit)),
+                                                IconButton(
+                                                    onPressed: () =>
+                                                        print('tap'),
+                                                    icon: Icon(Icons.copy)),
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    )),
                           ),
                         ],
                       );
@@ -89,9 +119,13 @@ class _ListOfItemsState extends State<ListOfItems> {
                   ),
                 );
               }
-            },),],
+            },
+          ),
+        ],
       ),
       drawer: DefaultDarwer(),
     );
   }
 }
+
+Future deleteItem(int id) => DatabaseService.instance.delete(id);

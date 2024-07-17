@@ -1,4 +1,5 @@
 import 'package:control_your_finances/service/database_service.dart';
+import 'package:control_your_finances/views/items_list_view.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -142,7 +143,7 @@ class _SummaryViewState extends State<SummaryView> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => HomeView()));
+                                  builder: (context) => ListOfItems()));
 
                         },
                         icon: Icon(Icons.add)),

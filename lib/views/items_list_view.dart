@@ -21,13 +21,13 @@ class _ListOfItemsState extends State<ListOfItems> {
     // TODO: implement initState
     super.initState();
     databaseService = DatabaseService.instance;
-    widget.data = databaseService.readAllEvents();
+    widget.data = databaseService.readAllItems();
   }
 
   @override
   void didUpdateWidget(covariant ListOfItems oldWidget) {
     // TODO: implement didUpdateWidget
-    oldWidget.data = databaseService.readAllEvents();
+    oldWidget.data = databaseService.readAllItems();
     print("ss1");
     super.didUpdateWidget(oldWidget);
   }
@@ -128,4 +128,4 @@ class _ListOfItemsState extends State<ListOfItems> {
   }
 }
 
-Future deleteItem(int id) => DatabaseService.instance.delete(id);
+Future deleteItem(int id) => DatabaseService.instance.deleteItem(id);

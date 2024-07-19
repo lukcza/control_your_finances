@@ -1,9 +1,12 @@
+import 'dart:async';
+
+import 'package:control_your_finances/service/bank_account_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'item_model.dart';
 
-class DatabaseService{
+class DatabaseService {
   static final DatabaseService instance = DatabaseService._init();
 
   static Database? _database;
@@ -28,7 +31,13 @@ class DatabaseService{
     const idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
     const textType = 'TEXT NOT NULL';
     const doubleType = 'REAL NOT NULL';
-
+    await db.execute('''
+    CREATE TABLE IF NOT EXISTS BankAccounts(
+    id $idType,
+     name $textType,
+     accountNumber $textType,
+  )
+''');
     await db.execute('''
     CREATE TABLE IF NOT EXISTS Items(
     id $idType,
@@ -41,7 +50,7 @@ class DatabaseService{
 ''');
   }
 
-  Future<ItemModel> create(ItemModel itemModel) async {
+  Future<ItemModel> createItem(ItemModel itemModel) async {
     final db = await instance.database;
 
     final id = await db.insert('Items', itemModel.toMap());
@@ -65,7 +74,7 @@ class DatabaseService{
     }
   }
 
-  Future<List<ItemModel>> readAllEvents() async {
+  Future<List<ItemModel>> readAllItems() async {
     final db = await instance.database;
 
     const orderBy = 'startDate ASC';
@@ -74,18 +83,18 @@ class DatabaseService{
     return result.map((json) => ItemModel.fromMap(json)).toList();
   }
 
-  Future<int> update(ItemModel event) async {
+  Future<int> updateItem(ItemModel item) async {
     final db = await instance.database;
 
     return db.update(
       'Items',
-      event.toMap(),
+      item.toMap(),
       where: 'id = ?',
-      whereArgs: [event.id],
+      whereArgs: [item.id],
     );
   }
 
-  Future<int> delete(int id) async {
+  Future<int> deleteItem(int id) async {
     final db = await instance.database;
 
     return await db.delete(
@@ -95,9 +104,63 @@ class DatabaseService{
     );
   }
 
-  Future close() async {
+  //Bank Account service
+  Future<BankAccountModel> createBankAccount(
+      BankAccountModel bankAccountModel) async {
+    final db = await instance.database;
+    final id = await db.insert('BankAccounts', bankAccountModel.toMap());
+    return bankAccountModel.copy(id: id);
+  }
+
+  Future<BankAccountModel?> readBankAccount(int id) async {
     final db = await instance.database;
 
+    final maps = await db.query(
+      'BankAccounts',
+      columns: ['id', 'name', 'accountBank'],
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+
+    if (maps.isNotEmpty) {
+      return BankAccountModel.fromMap(maps.first);
+    } else {
+      return null;
+    }
+  }
+
+  Future<List<BankAccountModel>> readAllBankAccounts() async {
+    final db = await instance.database;
+
+    const orderBy = 'startDate ASC';
+    final result = await db.query('BankAccounts', orderBy: orderBy);
+
+    return result.map((json) => BankAccountModel.fromMap(json)).toList();
+  }
+
+  Future<int> deleteBankAccount(int id) async {
+    final db = await instance.database;
+
+    return await db.delete(
+      'BankAccounts',
+      where: ' id=?',
+      whereArgs: [id],
+    );
+  }
+
+  Future<int> updateBankAccount(BankAccountModel bankAccountModel) async {
+    final db = await instance.database;
+
+    return db.update(
+      'Items',
+      bankAccountModel.toMap(),
+      where: 'id = ?',
+      whereArgs: [bankAccountModel.id],
+    );
+  }
+
+  Future close() async {
+    final db = await instance.database;
     db.close();
   }
 }

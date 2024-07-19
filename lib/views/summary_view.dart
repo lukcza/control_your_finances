@@ -138,7 +138,7 @@ class _SummaryViewState extends State<SummaryView> {
                   children: [
                     IconButton(
                         onPressed: () {
-                          databaseService.create(itemModel);
+                          databaseService.createItem(itemModel);
                           //print(databaseService.readItems(itemModel.id!));
                           Navigator.push(
                               context,

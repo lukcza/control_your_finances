@@ -1,4 +1,6 @@
 import 'dart:collection';
+import 'package:control_your_finances/service/bank_account_model.dart';
+import 'package:control_your_finances/service/database_service.dart';
 import 'package:intl/intl.dart';
 import 'package:clean_calendar/clean_calendar.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +16,7 @@ class FrequencyView extends StatefulWidget {
 }
 
 class _FrequencyViewState extends State<FrequencyView> {
+  late String selectedAccount;
   bool? isAutoFrequencyChecked = false;
   bool? isWeeklyFrequencyChecked = false;
   bool? isMonthlyFrequencyChecked = false;
@@ -141,6 +144,30 @@ class _FrequencyViewState extends State<FrequencyView> {
                       const Text("Auto frequency"),
                     ],
                   ),
+                  FutureBuilder(
+                      future: DatabaseService.instance.readAllBankAccounts(),
+                      
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        if (snapshot.hasData) {
+                          List<BankAccountModel> data = snapshot.data;
+                          return DropdownButton(items: data.map((BankAccountModel account){
+                            return DropdownMenuItem<String>(
+                                child: Text(account.name),
+                                value: account.name,
+                            );
+                          }).toList(),
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  selectedAccount = newValue!;
+                                });
+                              }
+                          );
+                        } else if (snapshot.hasError) {
+                          return Icon(Icons.error_outline);
+                        } else {
+                          return CircularProgressIndicator();
+                        }
+                      }),
                   if (isAutoFrequencyChecked != false) ...[
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -174,6 +201,7 @@ class _FrequencyViewState extends State<FrequencyView> {
                       ],
                     ),
                   ],
+
                   /* CleanCalendar(
                     datePickerCalendarView: DatePickerCalendarView.monthView,
                     dateSelectionMode: DatePickerSelectionMode.singleOrMultiple,
@@ -223,7 +251,7 @@ class _FrequencyViewState extends State<FrequencyView> {
                 ],
               ),
             ),
-            Column(
+            /*Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -245,7 +273,7 @@ class _FrequencyViewState extends State<FrequencyView> {
                   ],
                 ),
               ],
-            ),
+            ),*/
           ],
         ),
       ),

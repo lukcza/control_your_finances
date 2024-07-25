@@ -1,5 +1,6 @@
 import 'package:control_your_finances/service/database_service.dart';
 import 'package:control_your_finances/service/item_model.dart';
+import 'package:control_your_finances/views/add_bank_account_view.dart';
 import 'package:flutter/material.dart';
 import 'views/frequency_view.dart';
 void main() {
@@ -33,7 +34,7 @@ class _MyAppState extends State<MyApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home:FrequencyView(),
+      home:AddAcountNumberView(),
     );
   }
 }

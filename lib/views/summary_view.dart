@@ -12,10 +12,12 @@ class SummaryView extends StatefulWidget {
       required this.title,
       required this.date,
       required this.amount,
-      this.autoFrequencyType})
+      this.autoFrequencyType, required this.idBankAccountSender, required this.idBankAccountRecipients})
       : super(key: key);
   String title;
   DateTime date;
+  int? idBankAccountSender;
+  List<int?> idBankAccountRecipients;
   String? autoFrequencyType;
   double amount;
   @override
@@ -53,6 +55,8 @@ class _SummaryViewState extends State<SummaryView> {
     super.initState();
     setNextDate();
     itemModel = ItemModel(
+        idBankAccountSender: widget.idBankAccountSender,
+        idBankAccountRecipients: widget.idBankAccountRecipients,
         title: widget.title,
         startDate: widget.date,
         nextDate: nextDate,

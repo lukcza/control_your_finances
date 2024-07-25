@@ -27,27 +27,29 @@ class DatabaseService {
     return await openDatabase(path, version: 1, onCreate: _createDB);
   }
 
-  Future _createDB(Database db, int version) async {
+  Future<void> _createDB(Database db, int version) async {
     const idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
     const textType = 'TEXT NOT NULL';
     const doubleType = 'REAL NOT NULL';
+
     await db.execute('''
-    CREATE TABLE IF NOT EXISTS BankAccounts(
-    id $idType,
-     name $textType,
-     accountNumber $textType,
-  )
-''');
+    CREATE TABLE IF NOT EXISTS BankAccounts (
+      id $idType,
+      name $textType,
+      accountNumber $textType
+    )
+  ''');
+
     await db.execute('''
-    CREATE TABLE IF NOT EXISTS Items(
-    id $idType,
-     title $textType,
-  startDate $textType,
-  nextDate $textType,
-  amount $doubleType,
-  frequency $textType
-  )
-''');
+    CREATE TABLE IF NOT EXISTS Items (
+      id $idType,
+      title $textType,
+      startDate $textType,
+      nextDate $textType,
+      amount $doubleType,
+      frequency $textType
+    )
+  ''');
   }
 
   Future<ItemModel> createItem(ItemModel itemModel) async {

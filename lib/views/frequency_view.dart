@@ -16,6 +16,7 @@ class FrequencyView extends StatefulWidget {
 }
 
 class _FrequencyViewState extends State<FrequencyView> {
+  Future<List<BankAccountModel>>? data;
   late String selectedAccount;
   bool? isAutoFrequencyChecked = false;
   bool? isWeeklyFrequencyChecked = false;
@@ -49,6 +50,7 @@ class _FrequencyViewState extends State<FrequencyView> {
     toDayFormated = formatYMD.format(now);
     dateController.text = toDayFormated!;
     lastFormOfDate = DateTime.now();
+    data = DatabaseService.instance.readAllBankAccounts();
     super.initState();
   }
   /*//calendar
@@ -145,8 +147,7 @@ class _FrequencyViewState extends State<FrequencyView> {
                     ],
                   ),
                   FutureBuilder(
-                      future: DatabaseService.instance.readAllBankAccounts(),
-                      
+                      future: data,
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
                         if (snapshot.hasData) {
                           List<BankAccountModel> data = snapshot.data;

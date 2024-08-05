@@ -1,4 +1,3 @@
-import 'dart:collection';
 import 'package:control_your_finances/service/bank_account_model.dart';
 import 'package:control_your_finances/service/database_service.dart';
 import 'package:control_your_finances/views/add_bank_account_view.dart';
@@ -18,7 +17,7 @@ class FrequencyView extends StatefulWidget {
 
 class _FrequencyViewState extends State<FrequencyView> {
   Future<List<BankAccountModel>>? bankAccountList;
-  late String selectedAccount = "bank account name";
+  late String selectedAccount;
   BankAccountModel? firstElement;
   bool? isAutoFrequencyChecked = false;
   bool? isWeeklyFrequencyChecked = false;
@@ -54,7 +53,16 @@ class _FrequencyViewState extends State<FrequencyView> {
     dateController.text = toDayFormated!;
     lastFormOfDate = DateTime.now();
     bankAccountList = DatabaseService.instance.readAllBankAccounts();
-    selectedAccount = "bank account name";
+    selectedAccount = "null";
+    bankAccountList?.then((list) {
+      if (list.isNotEmpty) {
+        setState(() {
+          selectedAccount = list[0].name;
+        });
+      }else{
+        selectedAccount = "null";
+      }
+    });
     super.initState();
   }
   /*//calendar
@@ -66,7 +74,7 @@ class _FrequencyViewState extends State<FrequencyView> {
         margin: const EdgeInsets.all(20),
         child: Column(
           children: [
-           bankAccountList != null?
+            selectedAccount != null?
               Container(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -158,7 +166,7 @@ class _FrequencyViewState extends State<FrequencyView> {
                           if (snapshot.hasData) {
                             List<BankAccountModel> data = snapshot.data;
                             return DropdownButton(
-                              value: selectedAccount,
+                                value: selectedAccount,
                                 items: data.map((BankAccountModel account) {
                                   return DropdownMenuItem<String>(
                                     child: Text(account.name),

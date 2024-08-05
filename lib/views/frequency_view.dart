@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'package:control_your_finances/service/bank_account_model.dart';
 import 'package:control_your_finances/service/database_service.dart';
+import 'package:control_your_finances/views/add_bank_account_view.dart';
 import 'package:intl/intl.dart';
 import 'package:clean_calendar/clean_calendar.dart';
 import 'package:flutter/material.dart';
@@ -16,8 +17,9 @@ class FrequencyView extends StatefulWidget {
 }
 
 class _FrequencyViewState extends State<FrequencyView> {
-  Future<List<BankAccountModel>>? data;
-  late String selectedAccount;
+  Future<List<BankAccountModel>>? bankAccountList;
+  late String selectedAccount = "bank account name";
+  BankAccountModel? firstElement;
   bool? isAutoFrequencyChecked = false;
   bool? isWeeklyFrequencyChecked = false;
   bool? isMonthlyFrequencyChecked = false;
@@ -31,6 +33,7 @@ class _FrequencyViewState extends State<FrequencyView> {
       print(_selectedFrequency);
     }
   }
+
   //TODO: create a data validation for form
   //title
   TextEditingController titleController = TextEditingController();
@@ -50,7 +53,8 @@ class _FrequencyViewState extends State<FrequencyView> {
     toDayFormated = formatYMD.format(now);
     dateController.text = toDayFormated!;
     lastFormOfDate = DateTime.now();
-    data = DatabaseService.instance.readAllBankAccounts();
+    bankAccountList = DatabaseService.instance.readAllBankAccounts();
+    selectedAccount = "bank account name";
     super.initState();
   }
   /*//calendar
@@ -62,197 +66,149 @@ class _FrequencyViewState extends State<FrequencyView> {
         margin: const EdgeInsets.all(20),
         child: Column(
           children: [
-            Container(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.title),
-                      TextField(
-                        controller: titleController,
-                        decoration: const InputDecoration(
-                          constraints: BoxConstraints(maxWidth: 200),
-                          hintText: "Title",
-                        ),
-                      )
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.attach_money),
-                      TextField(
-                        keyboardType: TextInputType.number,
-                        controller: amountController,
-                        decoration: const InputDecoration(
-                            constraints: BoxConstraints(maxWidth: 200),
-                            hintText: "Amount to pay",
-                            suffixText: "zł"),
-                      )
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        onPressed: () async {
-                          DateTime? pickedDate = await showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime(2000),
-                              lastDate: DateTime(2028));
-                          TimeOfDay? pickedTime = await showTimePicker(
-                              context: context,
-                              initialTime: TimeOfDay(hour: 0, minute: 0));
-                          if (pickedDate == null || pickedTime == null) {
-                            setState(() {
-                              dateController.text = "";
-                            });
-                          } else {
-                            pickedDate = pickedDate.copyWith(
-                                hour: pickedTime.hour,
-                                minute: pickedTime.minute);
-                            lastFormOfDate = pickedDate;
-                            setState(() {
-                              dateController.text =
-                                  formatYMD.format(pickedDate!);
-                            });
-                          }
-                        },
-                        icon: Icon(Icons.date_range),
-                      ),
-                      TextField(
-                          controller: dateController,
-                          decoration: InputDecoration(
-                              constraints: BoxConstraints(maxWidth: 200),
-                              hintText: toDayFormated,
-                              labelText: "initial date")),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Checkbox(
-                        value: isAutoFrequencyChecked,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            isAutoFrequencyChecked = value;
-                            print("$isAutoFrequencyChecked");
-                          });
-                        },
-                      ),
-                      const Text("Auto frequency"),
-                    ],
-                  ),
-                  FutureBuilder(
-                      future: data,
-                      builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        if (snapshot.hasData) {
-                          List<BankAccountModel> data = snapshot.data;
-                          return DropdownButton(items: data.map((BankAccountModel account){
-                            return DropdownMenuItem<String>(
-                                child: Text(account.name),
-                                value: account.name,
-                            );
-                          }).toList(),
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  selectedAccount = newValue!;
-                                });
-                              }
-                          );
-                        } else if (snapshot.hasError) {
-                          return Icon(Icons.error_outline);
-                        } else {
-                          return CircularProgressIndicator();
-                        }
-                      }),
-                  if (isAutoFrequencyChecked != false) ...[
+           bankAccountList != null?
+              Container(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        DropdownButton(
-                          value: _selectedFrequency,
-                          items: const [
-                            DropdownMenuItem(
-                              child: Text("Daily"),
-                              value: "Daily",
-
-                            ),
-                            DropdownMenuItem(
-                              child: Text("Weekly"),
-                              value: "Weekly",
-                              
-                            ),
-                            DropdownMenuItem(
-                              child: Text("Monthly"),
-                              value: "Monthly",
-
-                            ),
-                            DropdownMenuItem(
-                              child: Text("Yearly"),
-                              value: "Yearly",
-
-                            ),
-                          ],
-                          onChanged: dropdownCallback,
-                        ),
+                        Icon(Icons.title),
+                        TextField(
+                          controller: titleController,
+                          decoration: const InputDecoration(
+                            constraints: BoxConstraints(maxWidth: 200),
+                            hintText: "Title",
+                          ),
+                        )
                       ],
                     ),
-                  ],
-
-                  /* CleanCalendar(
-                    datePickerCalendarView: DatePickerCalendarView.monthView,
-                    dateSelectionMode: DatePickerSelectionMode.singleOrMultiple,
-                    onCalendarViewDate: (DateTime calendarViewDate) {
-                      // print(calendarViewDate);
-                    },
-                    selectedDates: selectedDates,
-                    onSelectedDates: (List<DateTime> value) {
-                      DateTime startDate = value.first;
-                      setState(() {
-                          if (selectedDates.contains(startDate)) {
-                            selectedDates.remove(startDate);
-                            print(startDate);
-                          } else {
-                            if(isAutoFrequencyChecked==false) {
-                              selectedDates.add(startDate);
-                            }else{
-                              switch(_selectedFrequency){
-                                case "Daily":
-                                  DateTime endDate = DateTime(startDate.year+1, startDate.month, 1).subtract(Duration(days: 1));
-                                  while(startDate.isBefore(endDate)||startDate.isAtSameMomentAs(endDate)){
-                                    selectedDates.add(startDate);
-                                    startDate = startDate.add(Duration(days:1));
-                                  }
-                                  break;
-                                case "Weekly":
-                                  DateTime endDate = DateTime(startDate.year+1, startDate.month, 1).subtract(Duration(days: 1));
-                                  while(startDate.isBefore(endDate)||startDate.isAtSameMomentAs(endDate)){
-                                    selectedDates.add(startDate);
-                                    startDate = startDate.add(Duration(days:7));
-                                  }
-                                  break;
-                                case "Monthly":
-                                  DateTime endDate = DateTime(startDate.year+1, startDate.month, 1).subtract(Duration(days: 1));
-                                  while(startDate.isBefore(endDate)||startDate.isAtSameMomentAs(endDate)){
-                                    selectedDates.add(startDate);
-                                    startDate = new DateTime(startDate.year, startDate.month+1,startDate.day);
-                                  }
-                                  break;
-                              }
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.attach_money),
+                        TextField(
+                          keyboardType: TextInputType.number,
+                          controller: amountController,
+                          decoration: const InputDecoration(
+                              constraints: BoxConstraints(maxWidth: 200),
+                              hintText: "Amount to pay",
+                              suffixText: "zł"),
+                        )
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          onPressed: () async {
+                            DateTime? pickedDate = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(2000),
+                                lastDate: DateTime(2028));
+                            TimeOfDay? pickedTime = await showTimePicker(
+                                context: context,
+                                initialTime: TimeOfDay(hour: 0, minute: 0));
+                            if (pickedDate == null || pickedTime == null) {
+                              setState(() {
+                                dateController.text = "";
+                              });
+                            } else {
+                              pickedDate = pickedDate.copyWith(
+                                  hour: pickedTime.hour,
+                                  minute: pickedTime.minute);
+                              lastFormOfDate = pickedDate;
+                              setState(() {
+                                dateController.text =
+                                    formatYMD.format(pickedDate!);
+                              });
                             }
+                          },
+                          icon: Icon(Icons.date_range),
+                        ),
+                        TextField(
+                            controller: dateController,
+                            decoration: InputDecoration(
+                                constraints: BoxConstraints(maxWidth: 200),
+                                hintText: toDayFormated,
+                                labelText: "initial date")),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Checkbox(
+                          value: isAutoFrequencyChecked,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              isAutoFrequencyChecked = value;
+                              print("$isAutoFrequencyChecked");
+                            });
+                          },
+                        ),
+                        const Text("Auto frequency"),
+                      ],
+                    ),
+                    FutureBuilder(
+                        future: bankAccountList,
+                        builder:
+                            (BuildContext context, AsyncSnapshot snapshot) {
+                          if (snapshot.hasData) {
+                            List<BankAccountModel> data = snapshot.data;
+                            return DropdownButton(
+                              value: selectedAccount,
+                                items: data.map((BankAccountModel account) {
+                                  return DropdownMenuItem<String>(
+                                    child: Text(account.name),
+                                    value: account.name,
+                                  );
+                                }).toList(),
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    selectedAccount = newValue!;
+                                  });
+                                });
+                          } else if (snapshot.hasError) {
+                            return Text(snapshot.error.toString());
+                          } else {
+                            return CircularProgressIndicator();
                           }
-                      });
-                      print(selectedDates);
-                    },
-                  ),*/
-                ],
-              ),
-            ),
-            /*Column(
+                        }),
+                    if (isAutoFrequencyChecked != false) ...[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          DropdownButton(
+                            value: _selectedFrequency,
+                            items: const [
+                              DropdownMenuItem(
+                                child: Text("Daily"),
+                                value: "Daily",
+                              ),
+                              DropdownMenuItem(
+                                child: Text("Weekly"),
+                                value: "Weekly",
+                              ),
+                              DropdownMenuItem(
+                                child: Text("Monthly"),
+                                value: "Monthly",
+                              ),
+                              DropdownMenuItem(
+                                child: Text("Yearly"),
+                                value: "Yearly",
+                              ),
+                            ],
+                            onChanged: dropdownCallback,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              )
+              /*Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -275,7 +231,20 @@ class _FrequencyViewState extends State<FrequencyView> {
                 ),
               ],
             ),*/
-          ],
+            : Container(
+             child: Column(
+               children: [
+                 Text("You don't have any bank account added. Please add minimum two account (Sender and recipient)"),
+                 OutlinedButton(
+                   child: Text("Click to add"),
+                   onPressed: () {
+                     Navigator.push(context, MaterialPageRoute(builder: (context)=>AddAcountNumberView()));
+                   },
+                 ),
+               ],
+             ),
+           )
+            ],
         ),
       ),
     );

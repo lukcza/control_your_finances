@@ -134,7 +134,7 @@ class DatabaseService {
   Future<List<BankAccountModel>> readAllBankAccounts() async {
     final db = await instance.database;
 
-    const orderBy = 'startDate ASC';
+    const orderBy = 'name ASC';
     final result = await db.query('BankAccounts', orderBy: orderBy);
 
     return result.map((json) => BankAccountModel.fromMap(json)).toList();
